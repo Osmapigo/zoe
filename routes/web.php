@@ -11,33 +11,6 @@
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', 'ZipcodeController@home');
 
-Route::any(
-    '/zipcode',
-    'ZipcodeController@test'
-);
-
-// Route::get('/zipcode', function() {
-
-//     echo
-//         Form::open(array('url' => 'zipcode')) .
-//         Form::text('zipcode', Input::get('zipcode')) .
-//         Form::submit('go!') .
-//         Form::close();
-
-//     if (Input::get('zipcode'))
-//     {
-//         ZipCode::setCountry('US');
-//         ZipCode::setQueryParameter('geonames_username', 'demo');
-//         $client = ZipCode::find(Input::get('zipcode'))->toArray();
-//         $lat = $client['addresses'][0]['latitude'];
-//         $lon = $client['addresses'][0]['longitude'];
-//         echo '<pre>';
-//         var_dump($lat, $lon);
-//         echo '</pre>';
-//     }
-
-// });
+Route::any('/zipcode', 'ZipcodeController@compareDistances');
