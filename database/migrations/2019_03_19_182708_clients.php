@@ -19,7 +19,6 @@ class Clients extends Migration
             $table->string('zip_code');
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();
-            $table->timestamps();
         });
     }
 

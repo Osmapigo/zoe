@@ -2,59 +2,72 @@
 
 namespace App\Http\Controllers;
 
+use App\Client;
 use Illuminate\Http\Request;
-
-use App\client;
 use PragmaRX\ZipCode\ZipCode;
 
 class ZipcodeController extends Controller
 {
+    private $a = 1;
 
-    public function home() {
+    public function home()
+    {
         $this->setClientMissingCoordinates();
         return view('home');
     }
 
     public function compareDistances()
     {
+        $agentsData = $this->getAgentClients(request('agent1'), request('zipcode1'), request('agent2'), request('zipcode2'));
+        return view('clientList', $agentsData);
+    }
+
+    public function getAgentClients($agentOneName, $agentOneZip, $agentTwoName, $agentTwoZip)
+    {
         $agentOne = [
-            'name' => request('agent1'),
-            'coordinates' => $this->getCoordinatesByZipCode(request('zipcode1')),
+            'name' => $agentOneName,
+            'zip_code' => $agentOneZip,
+            'coordinates' => $this->getCoordinatesByZipCode($agentOneZip),
             'clients' => []
         ];
         $agentTwo = [
-            'name' => request('agent2'),
-            'coordinates' => $this->getCoordinatesByZipCode(request('zipcode2')),
+            'name' => $agentTwoName,
+            'zip_code' => $agentTwoZip,
+            'coordinates' => $this->getCoordinatesByZipCode($agentTwoZip),
             'clients' => []
         ];
-        $clients = client::where('latitude', '!=', null)->get();
+
+        $clients = Client::where('latitude', '!=', null)->get();
         foreach ($clients as $key => $client) {
-            $distanceAgentOne = $this->getDistanceBetweenCoordinates($agentOne['coordinates'], $client);
-            $distanceAgentTwo = $this->getDistanceBetweenCoordinates($agentTwo['coordinates'], $client);
+            $distanceAgentOne = $this->getDistanceBetweenCoordinates($agentOne['coordinates'], $client->toArray());
+            $distanceAgentTwo = $this->getDistanceBetweenCoordinates($agentTwo['coordinates'], $client->toArray());
             if ((float)$distanceAgentOne < (float)$distanceAgentTwo) {
                 $agentOne['clients'][] = $client;
             } else {
                 $agentTwo['clients'][] = $client;
             }
         }
-        return view('clientList', ['agentOne' => $agentOne, 'agentTwo' => $agentTwo]);
+        return ['agentOne' => $agentOne, 'agentTwo' => $agentTwo];
     }
 
-
-    private function getCoordinatesByZipCode($zipCode)
+    public function getCoordinatesByZipCode($zipCode)
     {
+        $coordinates = ['longitude' => null, 'latitude' => null];
         $zipcode = new ZipCode();
         $zipcode->setCountry('US');
         $zipcode->setQueryParameter('geonames_username', 'demo');
         $data = $zipcode->find($zipCode);
         if (!empty($data['addresses'])) {
-            return ['longitude' => $data['addresses'][0]['longitude'], 'latitude' => $data['addresses'][0]['latitude']];
+            $address = $data['addresses'][0];
+            $coordinates = ['longitude' => $address['longitude'], 'latitude' => $address['latitude']];
         }
+
+        return $coordinates;
     }
 
     private function setClientMissingCoordinates()
     {
-        $clients = client::whereLatitude(null)->get();
+        $clients = Client::whereLatitude(null)->get();
         foreach ($clients as $key => $client) {
             $coordinates = $this->getCoordinatesByZipCode($client->zip_code);
             $client->longitude = $coordinates['longitude'];
@@ -63,14 +76,14 @@ class ZipcodeController extends Controller
         }
     }
 
-    private function getDistanceBetweenCoordinates($agent, $client)
+    public function getDistanceBetweenCoordinates($agent, $client)
     {
         $earthRadius = 6371;
-        $dLat = $this->degToRad($client->latitude - $agent['latitude']);
-        $dLon = $this->degToRad($client->longitude - $agent['longitude']);
+        $dLat = $this->degToRad($client['latitude'] - $agent['latitude']);
+        $dLon = $this->degToRad($client['longitude'] - $agent['longitude']);
         $a = 
             sin($dLat/2) * sin($dLat/2) +
-            cos($this->degToRad($agent['latitude'])) * cos($this->degToRad($client->latitude)) * 
+            cos($this->degToRad($agent['latitude'])) * cos($this->degToRad($client['latitude'])) * 
             sin($dLon/2) * sin($dLon/2);
         return $earthRadius * 2 * atan2(sqrt($a), sqrt(1-$a));
     }
