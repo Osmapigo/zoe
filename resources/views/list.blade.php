@@ -1,19 +1,18 @@
 <div class="col-sm">
-    <p>The clients for {{$agent['name']}} with the ZIP code {{$agent['zip_code']}} are: </p>
     <table class="table table-striped">
         <thead class="thead-dark">
         <tr>
-            <th scope="col">Id</th>
-            <th scope="col">Name</th>
+            <th scope="col">Agent</th>
+            <th scope="col">Client Name</th>
             <th scope="col">ZIP code</th>
         </tr>
     </thead>
     <tbody>
-        @foreach($agent['clients'] as $client)
+        @foreach($clients as $client)
             <tr>
-                <td>{{ $client->id }}</td>
-                <td>{{ $client->name }}</td>
-                <td>{{ $client->zip_code }}</td>
+                <td>{{ $client['agentName'] }}</td>
+                <td>{{ $client['clientName'] }}</td>
+                <td>{{ $client['clientZip'] }}</td>
             </tr>
         @endforeach
     </tbody>    

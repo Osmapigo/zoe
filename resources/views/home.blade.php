@@ -1,5 +1,5 @@
 @extends('main')
 
 @section('content')
-    @include('form')
+    @include('form', ['agents' => $agents])
 @endsection

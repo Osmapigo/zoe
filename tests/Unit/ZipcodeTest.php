@@ -41,12 +41,9 @@ class ZipcodeTest extends TestCase
     {
         $zipController = new ZipcodeController();
         $agents = $zipController->getAgentClients('Oscar', '10021', 'Manuel', '85373');
-        $this->assertArrayHasKey('agentOne', $agents);
-        $this->assertArrayHasKey('agentTwo', $agents);
-        $this->assertEquals('Douglas', $agents['agentOne']['clients'][0]['name']);
-        $this->assertEquals('Kimberly', $agents['agentOne']['clients'][8]['name']);
-        $this->assertEquals('Michael', $agents['agentTwo']['clients'][0]['name']);
-        $this->assertEquals('Mary Sue', $agents['agentTwo']['clients'][17]['name']);
-        // dd(json_encode($agents));
+        $this->assertEquals('Manuel', $agents['clients'][0]['agentName']);
+        $this->assertEquals('Michael', $agents['clients'][0]['clientName']);
+        $this->assertEquals('Oscar', $agents['clients'][13]['agentName']);
+        $this->assertEquals('Douglas', $agents['clients'][13]['clientName']);
     }
 }

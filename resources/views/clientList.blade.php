@@ -4,7 +4,6 @@
     @include('form')
     <br>
     <div class="row" margin-top=>
-        @include('list', ['agent' => $agentOne])
-        @include('list', ['agent' => $agentTwo])
+        @include('list', ['clients' => $clients])
     </div>
 @endsection

@@ -9,6 +9,6 @@
                 <input type="text" class="form-control" name="agent2" placeholder="Name of the second agent" margin="2px">  
                 <input type="text" class="form-control" name="zipcode2" placeholder="ZIP of the second agent" margin="2px">
             </div>
-        <button class="btn btn-lg btn-primary btn-block" type="submit" style="margin-left: 45px;">Sort clients</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" style="margin-left: 45px;">MATCH</button>
     </form>
 </div>

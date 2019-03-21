@@ -13,7 +13,7 @@ class ZipcodeController extends Controller
     public function home()
     {
         $this->setClientMissingCoordinates();
-        return view('home');
+        return view('home', ['agents' => []]);
     }
 
     public function compareDistances()
@@ -24,17 +24,14 @@ class ZipcodeController extends Controller
 
     public function getAgentClients($agentOneName, $agentOneZip, $agentTwoName, $agentTwoZip)
     {
+        $mixedClients = [];
         $agentOne = [
             'name' => $agentOneName,
-            'zip_code' => $agentOneZip,
             'coordinates' => $this->getCoordinatesByZipCode($agentOneZip),
-            'clients' => []
         ];
         $agentTwo = [
             'name' => $agentTwoName,
-            'zip_code' => $agentTwoZip,
             'coordinates' => $this->getCoordinatesByZipCode($agentTwoZip),
-            'clients' => []
         ];
 
         $clients = Client::where('latitude', '!=', null)->get();
@@ -42,12 +39,18 @@ class ZipcodeController extends Controller
             $distanceAgentOne = $this->getDistanceBetweenCoordinates($agentOne['coordinates'], $client->toArray());
             $distanceAgentTwo = $this->getDistanceBetweenCoordinates($agentTwo['coordinates'], $client->toArray());
             if ((float)$distanceAgentOne < (float)$distanceAgentTwo) {
-                $agentOne['clients'][] = $client;
+                $agentName = $agentOne['name'];
             } else {
-                $agentTwo['clients'][] = $client;
+                $agentName = $agentTwo['name'];
             }
+            $mixedClients[] = [
+                'agentName' => $agentName,
+                'clientName' => $client->name,
+                'clientZip' => $client->zip_code
+            ];
         }
-        return ['agentOne' => $agentOne, 'agentTwo' => $agentTwo];
+
+        return ['clients' => $mixedClients];
     }
 
     public function getCoordinatesByZipCode($zipCode)
