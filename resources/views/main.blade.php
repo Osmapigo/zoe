@@ -14,8 +14,11 @@
     </head>
     <body>
        <div class="container">
+       <div>
             <img src="images/logo.png" alt="logo" width="100px">
             <h1> Client locator </h1>
+       </div>
+            
             @yield('content')
        </div>
     </body>

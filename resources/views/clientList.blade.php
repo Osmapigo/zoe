@@ -2,7 +2,8 @@
 
 @section('content')
     @include('form')
-    <div class="row">
+    <br>
+    <div class="row" margin-top=>
         @include('list', ['agent' => $agentOne])
         @include('list', ['agent' => $agentTwo])
     </div>
